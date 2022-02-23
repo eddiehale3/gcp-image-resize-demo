@@ -4,12 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-local": "functions-framework --target=helloWorld",
+    "start-dev": "nodemon --exec npm run start-local"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.0.0",
+    "@google-cloud/storage": "^5.18.2",
+    "sharp": "^0.30.1"
+  },
   "devDependencies": {
-    "typescript": "^4.5.5"
+    "nodemon": "^2.0.15"
   }
 }

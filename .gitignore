@@ -1,2 +1,8 @@
 **/node_modules/
-build
+terraform/.terraform*
+terraform/terraform*
+terraform/terraform.tfstate
+experiment*.json
+**secrets
+**/*.zip
+credentials.json
