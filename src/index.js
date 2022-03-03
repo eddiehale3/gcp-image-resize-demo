@@ -1,27 +1,27 @@
 const {Storage} = require('@google-cloud/storage');
 const sharp = require('sharp');
 
-const bucketName = process.env.BUCKET_NAME ?? 'ehale-test-bucket';
-const storageBucket = new Storage().bucket(bucketName);
-// const storageBucket = new Storage({
+const uploadBucketName = process.env.UPLOAD_BUCKET_NAME;
+const processedBucketName = process.env.PROCESSED_BUCKET_NAME;
+
+const client = new Storage()
+// const client = new Storage({
 //     keyFilename: '../credentials.json'
 // }).bucket(bucketName);
-const re = /[^/]*$/g;
 
 /**
  * Process image and reupload to Cloud Storage 
  * @param req https://expressjs.com/en/api.html#req
  * @param res https://expressjs.com/en/api.html#res
  */
-exports.helloWorld = async (req, res) => {
+exports.imageResize = async (req, res) => {
     console.log(`request body: ${JSON.stringify(req.body)}`);
 
     // Get object name
-    objectName = re.exec(req.body.protoPayload.resourceName)[0];
-    console.log(`object name: ${objectName}`);
+    objectName = req.body.name
 
     // Download object    
-    storageBucket.file(objectName).download((err, contents) => {
+    client.bucket(uploadBucketName).file(objectName).download((err, contents) => {
         if(err) {
             console.error(err);
         } else {
@@ -31,7 +31,7 @@ exports.helloWorld = async (req, res) => {
                 .toBuffer()
                 .then(async (data) => {
                     // Upload buffer directly to new object in GCS
-                    await storageBucket.file(`processed/${objectName}`).save(data);
+                    await client.bucket(processedBucketName).file(`processed-${objectName}`).save(data);
                     res.sendStatus(200);
                 })
                 .catch(err => {

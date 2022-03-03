@@ -37,14 +37,9 @@ cd src
 pack build \
   --builder gcr.io/buildpacks/builder:v1 \
   --env GOOGLE_FUNCTION_SIGNATURE_TYPE=http \
-  --env GOOGLE_FUNCTION_TARGET=helloWorld \
+  --env GOOGLE_FUNCTION_TARGET=imageResize \
   gcr.io/PROJECT_ID/IMAGE_NAME
 ```
-pack build \
-  --builder gcr.io/buildpacks/builder:v1 \
-  --env GOOGLE_FUNCTION_SIGNATURE_TYPE=http \
-  --env GOOGLE_FUNCTION_TARGET=helloWorld \
-  gcr.io/hale-edward-root/hello-cloudrun
 
 Where `PROJECT_ID` is your GCP project ID and `'IMAGE_NAME` is the name of your image.
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-local": "functions-framework --target=helloWorld",
+    "start-local": "functions-framework --target=imageResize",
     "start-dev": "nodemon --exec npm run start-local"
   },
   "keywords": [],

@@ -1,5 +1,9 @@
-output "bucket_name" {
-    value = google_storage_bucket.image-bucket.name
+output "upload_bucket_name" {
+    value = google_storage_bucket.upload-image-bucket.name
+}
+
+output "processed_bucket_name" {
+    value = google_storage_bucket.processed-image-bucket.name
 }
 
 output "eventarc_sa_email" {

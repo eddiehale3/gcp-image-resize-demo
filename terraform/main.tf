@@ -23,6 +23,11 @@ resource "google_service_account" "eventarc-sa" {
     description = "Service account for Eventarc"
 }
 
+/* 
+    Example using loop to add multiple roles to SA
+    
+    NOTE: Specifying a condition will add it to BOTH role bindings 
+*/
 resource "google_project_iam_member" "eventarc-sa-binding" {
     project = var.projectId
     count   = length(var.eventarc_role_list)
@@ -35,31 +40,37 @@ resource "google_service_account" "cloudrun-sa" {
     description = "Service account for CloudRun"
 }
 
-# Example using loop to add multiple roles to SA
-resource "google_project_iam_member" "cloudrun-sa-binding" {
+resource "google_project_iam_member" "cloudrun-upload-bucket-binding" {
     project = var.projectId
-    count   = length(var.cloud_run_role_list)
-    role    = var.cloud_run_role_list[count.index]
+    role    = "roles/storage.objectViewer"
     member  = "serviceAccount:${google_service_account.cloudrun-sa.email}"
+}
 
-    condition {
-        title       = "bucketCondition"
-        description = "Scoping service account to project bucket"
-        expression  = "resource.type == 'storage.googleapis.com/Bucket' && resource.name.startsWith('projects/_/buckets/${google_storage_bucket.image-bucket.name}/')"
-    }
+resource "google_project_iam_member" "cloudrun-processed-bucket-binding" {
+    project = var.projectId
+    role    = "roles/storage.objectCreator"
+    member  = "serviceAccount:${google_service_account.cloudrun-sa.email}"
 }
 
 ################
 #   STORAGE    #
 ################
+# Random string to add at end of bucket name
 resource "random_string" "random" {
     length  = 8
     special = false
     upper   = false
 }
 
-resource "google_storage_bucket" "image-bucket" {
-    name            = "image_bucket_demo_${random_string.random.result}"
+resource "google_storage_bucket" "upload-image-bucket" {
+    name            = "upload-image-bucket-demo-${random_string.random.result}"
+    location        = var.region
+    force_destroy   = true
+}
+
+resource "google_storage_bucket" "processed-image-bucket" {
+    name            = "processed-image-bucket-${random_string.random.result}"
+    location        = var.region
     force_destroy   = true
 }
 
@@ -69,26 +80,16 @@ resource "google_storage_bucket" "image-bucket" {
 resource "google_eventarc_trigger" "demo_event_trigger" {
     name            = "demo-upload-event-trigger"
     location        = var.region
-    service_account = "${google_service_account.eventarc-sa.email}"
+    service_account = google_service_account.eventarc-sa.email
 
     matching_criteria {
         attribute   = "type"
-        value       = "google.cloud.audit.log.v1.written"
+        value       = "google.cloud.storage.object.v1.finalized"
     }
 
     matching_criteria {
-        attribute   = "serviceName"
-        value       = "storage.googleapis.com"
-    }
-
-    matching_criteria {
-        attribute   = "methodName"
-        value       = "storage.objects.create"
-    }
-
-    matching_criteria {
-        attribute   = "resourceName"
-        value       = "projects/_/buckets/${google_storage_bucket.image-bucket.name}/objects/*"
+        attribute   = "bucket"
+        value       = google_storage_bucket.upload-image-bucket.name
     }
 
     destination {
@@ -109,6 +110,14 @@ resource "google_cloud_run_service" "demo-cr-service" {
         spec {
             containers {
                 image = var.image
+                env {
+                    name    = "UPLOAD_BUCKET_NAME"
+                    value   = google_storage_bucket.upload-image-bucket.name
+                }
+                env {
+                    name    = "PROCESSED_BUCKET_NAME"
+                    value   = google_storage_bucket.processed-image-bucket.name
+                }
             }
             service_account_name = "${google_service_account.cloudrun-sa.email}"
         }
