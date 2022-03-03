@@ -43,7 +43,7 @@ To build the CloudRun container:
 2. Build a container from your function using the Functions [buildpacks](https://github.com/GoogleCloudPlatform/buildpacks):
 
 ```bash
-cd src
+cd src && npm i
 pack build \
   --builder gcr.io/buildpacks/builder:v1 \
   --env GOOGLE_FUNCTION_SIGNATURE_TYPE=http \
@@ -51,7 +51,7 @@ pack build \
   gcr.io/PROJECT_ID/IMAGE_NAME
 ```
 
-Where `PROJECT_ID` is your GCP project ID and `'IMAGE_NAME` is the name of your image.
+Where `PROJECT_ID` is your GCP project ID and `IMAGE_NAME` is the name of your image.
 
 3. Upload to your Google Cloud project image repository using [gcloud credential helper](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper)
 
@@ -59,6 +59,6 @@ Where `PROJECT_ID` is your GCP project ID and `'IMAGE_NAME` is the name of your 
 docker push gcr.io/PROJECT_ID/IMAGE_NAME
 ```
 
-Where `PROJECT_ID` is your GCP project ID and `'IMAGE_NAME` is the name of your image.
+Where `PROJECT_ID` is your GCP project ID and `IMAGE_NAME` is the name of your image.
 
 4. Update `image` variable in `terraform/variables.tf` with this image name
