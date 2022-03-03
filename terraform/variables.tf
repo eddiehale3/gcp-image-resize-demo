@@ -1,6 +1,6 @@
 variable "projectId" {
     type    = string
-    default = "hale-edward-root"
+    default = "PROJECT_ID"
 }
 
 variable "region" {
@@ -10,7 +10,7 @@ variable "region" {
 
 variable "image" {
     type    = string
-    default = "gcr.io/hale-edward-root/image-resize"
+    default = "IMAGE_NAME"
 }
 
 variable "eventarc_role_list" {
