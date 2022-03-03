@@ -4,10 +4,7 @@ const sharp = require('sharp');
 const uploadBucketName = process.env.UPLOAD_BUCKET_NAME;
 const processedBucketName = process.env.PROCESSED_BUCKET_NAME;
 
-const client = new Storage()
-// const client = new Storage({
-//     keyFilename: '../credentials.json'
-// }).bucket(bucketName);
+const client = new Storage();
 
 /**
  * Process image and reupload to Cloud Storage 
