@@ -21,11 +21,3 @@ variable "eventarc_role_list" {
         "roles/run.invoker"
     ]
 }
-
-# variable "cloud_run_role_list" {
-#     type    = list(string)
-#     default = [
-#         "roles/storage.objectViewer", 
-#         "roles/storage.objectCreator"
-#     ]
-# }

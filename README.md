@@ -1,6 +1,10 @@
-# Eventarc -> CloudRun Image Resize demo
+# Google Cloud Image Resize Demo
 
 This project demonstrates how to trigger CloudRun using an Eventarc rule from Cloud Storage. 
+
+# Architecture
+
+![](./resources/Image_Resize_Architecture.png)
 
 # Usage 
 
@@ -21,6 +25,12 @@ In order to execute this project you must have:
     - Roles needed:
         - roles/eventarc.admin
         - roles/run.admin
+        - roles/iam.securityAdmin
+        - roles/iam.securityReviewer
+        - roles/iam.serviceAccountAdmin
+        - roles/iam.serviceAccountUser
+        - roles/storage.admin
+
 2. A Service Account Key associated with the Service Account from #1. Then update `credentials` under `terraform/main.tf` to point to this json file. 
     - [Creating and managing service account keys](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)
 
@@ -50,3 +60,5 @@ docker push gcr.io/PROJECT_ID/IMAGE_NAME
 ```
 
 Where `PROJECT_ID` is your GCP project ID and `'IMAGE_NAME` is the name of your image.
+
+4. Update `image` variable in `terraform/variables.tf` with this image name
